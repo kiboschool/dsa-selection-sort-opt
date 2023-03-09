@@ -51,18 +51,37 @@ class Sort:
 
     # Modified version of selection sort.
     def selection_sort_mod(self, lst):
-        for i in range(len(lst) - 1):
+        ## change 1: loop index
+        for i in range(len(lst) // 2):
             index_min = i
-            for j in range(i + 1, len(lst)):
-                if self.compare(lst[j] < lst[index_min]):
-                    index_min = j
-            self.swap(lst, i, index_min)
+            ## change 2: add index_max and update it appropriately
+            index_max = i
+            ## change 3: update j loop to stop earlier each time, and go up by two each time 
+            for j in range(i + 1, len(lst) - i, 2):
+                index_lesser = j
+                index_greater = j + 1
+                if j >= len(lst) - i - 1:
+                    index_greater = j
+                elif self.compare(lst[j] > lst[j + 1]):
+                    index_lesser = j + 1
+                    index_greater = j
 
+                if self.compare(lst[index_lesser] < lst[index_min]):
+                    index_min = index_lesser
+
+                if self.compare(lst[index_greater] > lst[index_max]):
+                    index_max = index_greater
+
+            # change 3: swap index max with appropriate index
+            self.swap(lst, i, index_min)
+            if i == index_max:
+                index_max = index_min
+            self.swap(lst, len(lst) - 1 - i, index_max)
 
 if __name__ == "__main__":
     sort = Sort()
     lst = Sort.random_list(100)
-    sort.selection_sort(lst)
+    sort.selection_sort_mod(lst)
     print("comparisons: " + str(sort.get_comps()))
     print("moves: " + str(sort.get_moves()))
     assert(Sort.is_sorted(lst))
